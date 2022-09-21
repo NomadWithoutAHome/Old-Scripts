@@ -19,17 +19,31 @@ function find_specific_boss(boss)
 end
 
 function autoReward()
-    local bossPosition = find_specific_boss(boss)
+    local bossPosition = find_specific_boss('Yeti Giant')
     if bossPosition:FindFirstChild("Boss") and bossPosition.Boss:WaitForChild("Boss"):FindFirstChild("HumanoidRootPart") then
         local Event = game.ReplicatedStorage.Signals.bossReward
 
         spawn(
             function()
-                Event:FireServer("hit", boss, game:GetService("Workspace").steps.bossLedge.Boss.Boss.Humanoid)
+                Event:FireServer("hit", 'Yeti Giant', game:GetService("Workspace").steps.bossLedge.Boss.Boss.Humanoid)
                 task.wait()
             end
         )
     end
 end
 
-teleport_to_boss('Yeti Giant')
+function boss_auto_kill()
+    local bossPosition = find_specific_boss('Yeti Giant')
+    local Event = game:GetService("ReplicatedStorage").Signals.snowballProjectile
+    while true do
+        repeat 
+            task.wait()
+            if bossPosition.Boss:WaitForChild('Boss') and bossPosition.Boss:WaitForChild("Boss"):FindFirstChild("HumanoidRootPart") and bossPosition.Boss.Boss.Humanoid.Health > 0 then
+                local position = bossPosition.Boss.Boss.HumanoidRootPart.CFrame.p;
+                Event:FireServer('explodeLauncher', position)
+                task.wait(1)
+                end
+        until not bossPosition.Boss:FindFirstChild('Boss') or bossPosition.Boss.Boss:WaitForChild('Configuration').state.Value == 'dead' or  bossPosition.Boss.Boss.Humanoid.Health < 0
+    end
+end
+
