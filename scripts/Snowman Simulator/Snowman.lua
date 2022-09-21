@@ -44,7 +44,6 @@ end
 
 function snowman_gift()
     if snowman_gift_ready() then
-        warn("Attempt to grab Gift")
         for _, v in pairs(giftLocations:GetDescendants()) do
             if
                 v:IsA("StringValue") and v.Name == "ownerName" and v.Value == thisPlayer.Name and
@@ -57,8 +56,6 @@ function snowman_gift()
                     warn("wait for box to be nil")
                     task.wait()
                 until snowman_gift_ready() == nil
-                warn("waiting for parent to be gone")
-                print("box is gone!")
                 snowman_rebirth()
             end
         end
@@ -74,20 +71,14 @@ task.spawn(
                 print('Starting Roll')
                 repeat
                     snowballCollect:FireServer()
-                    print('Collecting')
                     task.wait()
-                    print('Checking Until')
                 until playerBallsize.Value >= getMaxSizeFromLevel(thisPlayer) or playerBallcount.Value == playerStorage.Value 
-                print('Stopping Roll')
                 snowballRemoteInvoke:InvokeServer("stopRoll")
                 if playerBallcount.Value == playerStorage.Value then
-                    print('Adding Snowman')
                     snowballAdd:FireServer("addToSnowman")
                 end
                 task.wait(2)
-                print('Done Waiting')
             end
-            print('Checking Gift')
             snowman_gift()
         end
     end
